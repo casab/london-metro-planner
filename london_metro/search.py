@@ -1,6 +1,6 @@
 from london_metro import *
 import collections
-from typing import Dict
+from typing import Dict, Optional
 
 
 class Queue:
@@ -22,13 +22,27 @@ def breadth_first_search(graph: MetroGraph, name: str):
     frontier = Queue()
     start = graph.get_station(name)
     frontier.put(start)
-    reached: Dict[Station, bool] = {start: True}
-
+    came_from: Dict[Station, Optional[Station]] = {start: None}
+    """
+    current_lines = start.get_lines()
+    current_line = get_set_item(current_lines)
+    print(f"Currently on line {current_line}")
+    """
     while not frontier.empty():
-        current: str = frontier.get()
-        print("  Visiting %s" % current.get_name())
-        for next, cost in graph.get_neighbors(current.get_name()).items():
-            if next not in reached:
-                frontier.put(next)
-                reached[next] = True
-
+        current: Station = frontier.get()
+        print(f"  Visiting {current.get_name()}")
+        for next_station, cost in current.get_neighbors().items():
+            if next_station not in came_from:
+                """
+                # TODO: this needs fixing
+                if current_line not in (current_lines & next_station.get_lines()):
+                    print(f"**Current line: {current_line}")
+                    print(f"**Current lines: {current_lines}")
+                    print(f"**Next lines: {next_station.get_lines()}")
+                    current_line = get_set_item(next_station.get_lines())
+                    print(f"Changed current line to {current_line}")
+                    current_lines = next_station.get_lines()
+                """
+                frontier.put(next_station)
+                came_from[next_station] = current
+    return came_from

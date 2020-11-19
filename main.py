@@ -9,8 +9,11 @@ def main():
     for line, source, destination, eta in connections:
         metro_graph.add_connection(line, source, destination, eta)
 
-    print('Reachable from A:')
-    breadth_first_search(metro_graph, "Brixton")
+    source_dest = "Brixton"
+    print(f'Reachable from {source_dest}:')
+    came_from = breadth_first_search(metro_graph, source_dest)
+    named_came_from = {k.get_name(): v.get_name() if v else None for k, v in came_from.items()}
+    print(named_came_from)
 
 
 if __name__ == "__main__":
