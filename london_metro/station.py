@@ -36,3 +36,6 @@ class Station:
 
     def __hash__(self):
         return hash(self.name.lower())
+
+    def __lt__(self, other):
+        return False

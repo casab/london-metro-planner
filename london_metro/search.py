@@ -1,53 +1,52 @@
 from london_metro import *
-import collections
-from typing import Dict, Optional
+import heapq
+from typing import Dict, Optional, List, Tuple
 
 
-class Queue:
+class PriorityQueue:
     def __init__(self):
-        self.elements = collections.deque()
+        self.elements: List[Tuple[float, Station]] = []
 
     def empty(self) -> bool:
         return len(self.elements) == 0
 
-    def put(self, x: Station):
-        self.elements.append(x)
+    def put(self, item: Station, priority: float):
+        heapq.heappush(self.elements, (priority, item))
 
     def get(self) -> Station:
-        return self.elements.popleft()
+        return heapq.heappop(self.elements)[1]
 
 
-def breadth_first_search(graph: MetroGraph, start_name: str, end_name: str):
-    # print out what we find
-    frontier = Queue()
-    start = graph.get_station(start_name)
-    frontier.put(start)
+def dijkstra_search(start: Station, end: Station):
+    frontier = PriorityQueue()
+    frontier.put(start, 0)
     came_from: Dict[Station, Optional[Station]] = {start: None}
-    """
-    current_lines = start.get_lines()
-    current_line = get_set_item(current_lines)
-    print(f"Currently on line {current_line}")
-    """
+    cost_so_far: Dict[Station, float] = {start: 0}
+
     while not frontier.empty():
         current: Station = frontier.get()
-        print(f"  Visiting {current.get_name()}")
 
-        # Early stopping
-        if current.get_name() == end_name:
+        if current == end:
             break
 
         for next_station, cost in current.get_neighbors().items():
-            if next_station not in came_from:
-                """
-                # TODO: this needs fixing
-                if current_line not in (current_lines & next_station.get_lines()):
-                    print(f"**Current line: {current_line}")
-                    print(f"**Current lines: {current_lines}")
-                    print(f"**Next lines: {next_station.get_lines()}")
-                    current_line = get_set_item(next_station.get_lines())
-                    print(f"Changed current line to {current_line}")
-                    current_lines = next_station.get_lines()
-                """
-                frontier.put(next_station)
+            new_cost = cost_so_far[current] + cost
+            if next_station not in cost_so_far or new_cost < cost_so_far[next_station]:
+                cost_so_far[next_station] = new_cost
+                priority = new_cost
+                frontier.put(next_station, priority)
                 came_from[next_station] = current
-    return came_from
+
+    return came_from, cost_so_far
+
+
+def reconstruct_path(came_from: Dict[Station, Station],
+                     start: Station, goal: Station) -> List[Station]:
+    current: Station = goal
+    path: List[Station] = []
+    while current != start:
+        path.append(current)
+        current = came_from[current]
+    path.append(start)
+    path.reverse()
+    return path
