@@ -1,5 +1,6 @@
 from openpyxl import load_workbook
 from typing import Set, Tuple, List
+from london_metro import Station
 
 
 def read_data(path):
@@ -32,3 +33,17 @@ def read_data(path):
 def get_set_item(s: Set[str]) -> str:
     for e in s:
         return e
+
+
+def calculate_lines(path: List[Station]) -> List[str]:
+    lines = []
+    current_line = ""
+    for i in range(len(path) - 1):
+        source_station_lines = path[i].get_lines()
+        target_station_lines = path[i+1].get_lines()
+        if current_line not in (source_station_lines & target_station_lines):
+            current_line = get_set_item(source_station_lines & target_station_lines)
+        if i == 0:
+            lines.append(current_line)
+        lines.append(current_line)
+    return lines

@@ -1,4 +1,4 @@
-from london_metro import MetroGraph, read_data, dijkstra_search, reconstruct_path
+from london_metro import MetroGraph, read_data, dijkstra_search, reconstruct_path, calculate_lines
 
 
 def main():
@@ -14,8 +14,10 @@ def main():
 
     came_from, cost_so_far = dijkstra_search(start, end)
     path = reconstruct_path(came_from, start, end)
+    lines = calculate_lines(path)
 
-    print([station.get_name() for station in path])
+    for i, station in enumerate(path):
+        print(f"{station.get_name()} : {lines[i]}")
 
 
 if __name__ == "__main__":
