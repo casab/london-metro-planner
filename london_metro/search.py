@@ -17,10 +17,10 @@ class Queue:
         return self.elements.popleft()
 
 
-def breadth_first_search(graph: MetroGraph, name: str):
+def breadth_first_search(graph: MetroGraph, start_name: str, end_name: str):
     # print out what we find
     frontier = Queue()
-    start = graph.get_station(name)
+    start = graph.get_station(start_name)
     frontier.put(start)
     came_from: Dict[Station, Optional[Station]] = {start: None}
     """
@@ -31,6 +31,11 @@ def breadth_first_search(graph: MetroGraph, name: str):
     while not frontier.empty():
         current: Station = frontier.get()
         print(f"  Visiting {current.get_name()}")
+
+        # Early stopping
+        if current.get_name() == end_name:
+            break
+
         for next_station, cost in current.get_neighbors().items():
             if next_station not in came_from:
                 """
