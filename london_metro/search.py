@@ -1,31 +1,18 @@
 from london_metro import *
-import heapq
-from typing import Dict, Optional, List, Tuple
-
-
-class PriorityQueue:
-    def __init__(self):
-        self.elements: List[Tuple[float, Station]] = []
-
-    def empty(self) -> bool:
-        return len(self.elements) == 0
-
-    def put(self, item: Station, priority: float):
-        heapq.heappush(self.elements, (priority, item))
-
-    def get(self) -> Station:
-        return heapq.heappop(self.elements)[1]
+from heapq import heappush, heappop
+from typing import Dict, Optional, List
 
 
 def dijkstra_search(start: Station, end: Station):
-    frontier = PriorityQueue()
-    frontier.put(start, 0)
+    priority_queue = []
+    heappush(priority_queue, (0, start))
     came_from: Dict[Station, Optional[Station]] = {start: None}
     cost_so_far: Dict[Station, float] = {start: 0}
 
-    while not frontier.empty():
-        current: Station = frontier.get()
+    while len(priority_queue):
+        current: Station = heappop(priority_queue)[1]
 
+        # Early stop the search
         if current == end:
             break
 
@@ -34,7 +21,7 @@ def dijkstra_search(start: Station, end: Station):
             if next_station not in cost_so_far or new_cost < cost_so_far[next_station]:
                 cost_so_far[next_station] = new_cost
                 priority = new_cost
-                frontier.put(next_station, priority)
+                heappush(priority_queue, (priority, next_station))
                 came_from[next_station] = current
 
     return came_from, cost_so_far

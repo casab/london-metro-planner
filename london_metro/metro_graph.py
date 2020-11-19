@@ -1,5 +1,5 @@
 from london_metro import Station
-from typing import Dict, Optional, List
+from typing import Optional, List
 
 
 class MetroGraph:
@@ -13,8 +13,6 @@ class MetroGraph:
         return iter(self.station_dict.values())
 
     def add_station(self, name: str, line: str) -> Station:
-        if name == "Stockwell":
-            pass
         if name in self.station_dict.keys():
             self.station_dict[name].add_line(line)
             return self.station_dict[name]
@@ -28,9 +26,6 @@ class MetroGraph:
             return self.station_dict[name]
         else:
             return None
-
-    def get_neighbors(self, name: str) -> Dict[Station, int]:
-        return self.get_station(name).get_neighbors()
 
     def add_connection(self, line: str, source: str, destination: str, eta: int):
         if source not in self.station_dict:
