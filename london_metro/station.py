@@ -19,9 +19,6 @@ class Station:
     def get_lines(self):
         return self.lines
 
-    def get_connections(self):
-        return self.neighbors.keys()
-
     def get_name(self) -> str:
         return self.name
 
