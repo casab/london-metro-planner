@@ -14,30 +14,27 @@ class MetroGraph:
 
     def add_station(self, name: str, line: str) -> Station:
         if name in self.station_dict.keys():
-            self.station_dict[name].add_line(line)
-            return self.station_dict[name]
+            self.station_dict[name.lower()].add_line(line)
+            return self.station_dict[name.lower()]
         else:
             new_station = Station(name, line)
-            self.station_dict[name] = new_station
+            self.station_dict[name.lower()] = new_station
             return new_station
 
     def get_station(self, name: str) -> Optional[Station]:
-        if name in self.station_dict:
-            return self.station_dict[name]
+        if name.lower() in self.station_dict:
+            return self.station_dict[name.lower()]
         else:
             return None
 
     def add_connection(self, line: str, source: str, destination: str, eta: float):
-        if source not in self.station_dict:
+        if source.lower() not in self.station_dict:
             self.add_station(source, line)
-        if destination not in self.station_dict:
+        if destination.lower() not in self.station_dict:
             self.add_station(destination, line)
 
-        self.station_dict[source].add_neighbor(line, self.station_dict[destination], eta)
-        self.station_dict[destination].add_neighbor(line, self.station_dict[source], eta)
-
-    def get_stations(self) -> List[Station]:
-        return list(self.station_dict.keys())
+        self.station_dict[source.lower()].add_neighbor(line, self.station_dict[destination.lower()], eta)
+        self.station_dict[destination.lower()].add_neighbor(line, self.station_dict[source.lower()], eta)
 
     def __len__(self):
         return len(self.station_dict)

@@ -10,8 +10,8 @@ def main():
     for line, source, destination, eta in connections:
         metro_graph.add_connection(line, source, destination, eta)
 
-    start = metro_graph.get_station("Maida Vale")
-    end = metro_graph.get_station("Westbourne Park")
+    start = metro_graph.get_station("maida Vale")
+    end = metro_graph.get_station("Westbourne park")
     leaving_time = time(13, 0)
 
     came_from, cost_so_far = dijkstra_search(start, end, leaving_time)
