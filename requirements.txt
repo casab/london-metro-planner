@@ -2,3 +2,5 @@ setuptools~=50.3.2
 openpyxl~=3.0.5
 pytest~=6.1.2
 PyQt5~=5.15.1
+pyinstaller==4.1
+pyinstaller-hooks-contrib==2020.10
