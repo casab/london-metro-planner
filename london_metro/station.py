@@ -1,14 +1,14 @@
-from typing import Dict, Set
+from typing import Dict, Set, Tuple
 
 
 class Station:
     def __init__(self, name, line):
         self.name = name
         self.lines: Set[str] = {line}
-        self.neighbors: Dict["Station", int] = {}
+        self.neighbors: Dict[Tuple[str, "Station"], int] = {}
 
-    def add_neighbor(self, neighbor: "Station", eta: int):
-        self.neighbors[neighbor] = eta
+    def add_neighbor(self, line: str, neighbor: "Station", eta: int):
+        self.neighbors[(line, neighbor)] = eta
 
     def get_neighbors(self):
         return self.neighbors
@@ -22,8 +22,8 @@ class Station:
     def get_name(self) -> str:
         return self.name
 
-    def get_eta(self, neighbor: "Station") -> int:
-        return self.neighbors[neighbor]
+    def get_eta(self, line: str, neighbor: "Station") -> int:
+        return self.neighbors[(line, neighbor)]
 
     def __str__(self):
         return f"{self.name}\nNeighbors: {[x for x in self.neighbors]}\nLines: {[x for x in self.lines]}"

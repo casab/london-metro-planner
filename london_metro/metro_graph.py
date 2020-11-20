@@ -33,8 +33,8 @@ class MetroGraph:
         if destination not in self.station_dict:
             self.add_station(destination, line)
 
-        self.station_dict[source].add_neighbor(self.station_dict[destination], eta)
-        self.station_dict[destination].add_neighbor(self.station_dict[source], eta)
+        self.station_dict[source].add_neighbor(line, self.station_dict[destination], eta)
+        self.station_dict[destination].add_neighbor(line, self.station_dict[source], eta)
 
     def get_stations(self) -> List[Station]:
         return list(self.station_dict.keys())
