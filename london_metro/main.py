@@ -1,9 +1,9 @@
 from london_metro import MetroGraph, read_data, dijkstra_search, reconstruct_path, add_minutes
-from datetime import datetime, time
+from datetime import time
 
 
 def main():
-    connections, line_stations = read_data("data/London_Underground_data.xlsx")
+    connections, line_stations = read_data("../data/London_Underground_data.xlsx")
     metro_graph = MetroGraph()
     for line, station in line_stations:
         metro_graph.add_station(station, line)
