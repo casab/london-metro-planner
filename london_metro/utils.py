@@ -1,17 +1,18 @@
 from openpyxl import load_workbook
-from typing import Set, Tuple, List
-from datetime import datetime, timedelta
+from typing import Dict, Tuple, List
+from datetime import datetime, timedelta, time
 from itertools import groupby
+from london_metro import Station
 
 
 def read_data(path):
     """
     Reads the given excel file and returns the list of connections
     and dictionary of line stations
-    :param path: String for the excel file to be read
-    :return: (connections, line_stations)
-             connections = Tuple(line name, source, destination, ETA)
-             line_stations = Dictionary(line name: List(station))
+    :param path: Path for the excel file to be read
+    :return: To lists that represents connections and line-station pairs.
+             Connection list structure is line, source, target, eta
+             Line-station structure is line, station
     """
     wb = load_workbook(path)["Sheet1"]
     connections: List[Tuple[str, str, str, float]] = [row for row in wb.values if (row[2] and row[3])]
@@ -19,19 +20,24 @@ def read_data(path):
     return connections, line_stations
 
 
-def get_set_item(s: Set[str]) -> str:
-    for e in s:
-        return e
-
-
-def add_minutes(time_obj, mins_to_add):
+def add_minutes(time_obj: time, mins_to_add: float) -> time:
+    """
+    Adds the given minutes to the given time object and returns a new time object
+    :param time_obj: time object to add minutes
+    :param mins_to_add: total minutes to add
+    :return: new time object with added minutes
+    """
     fulldate = datetime(1, 1, 1, time_obj.hour, time_obj.minute, time_obj.second)
     fulldate = fulldate + timedelta(minutes=mins_to_add)
     return fulldate.time()
 
 
-def calculate_steps(path, cost_so_far, leaving_time):
-    steps = []
+def calculate_steps(path: List[Tuple[Station, str]], cost_so_far: Dict[Station, float], leaving_time: time):
+    """
+    Analyzes the given path to create a list of steps in the form of;
+        station, line, time to next station, total time
+    """
+    steps: List[List[str, str, float, float]] = []
     for i, (station, line) in enumerate(path):
         previous_line = None
         time_to_next = None
@@ -46,7 +52,11 @@ def calculate_steps(path, cost_so_far, leaving_time):
     return steps
 
 
-def calculate_changes(path):
+def calculate_changes(path: List[Tuple[Station, str]]):
+    """
+    Calculates when there is a line change, and returns a list of changes
+    in the form of; [line, start station, end station]
+    """
     changes = []
     for line, stations in groupby(path, lambda t: t[1]):
         stations = list(stations)
@@ -59,6 +69,9 @@ def calculate_changes(path):
 
 
 def create_summary(path, cost_so_far, leaving_time):
+    """
+    Wrapper function around calculate_changes and calculate_steps
+    """
     changes = calculate_changes(path)
     steps = calculate_steps(path, cost_so_far, leaving_time)
     return steps, changes

@@ -1,7 +1,6 @@
 from PyQt5.QtCore import Qt, QSortFilterProxyModel, QTime, QStringListModel, QAbstractTableModel
 from PyQt5.QtWidgets import QCompleter, QComboBox, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QTimeEdit, QTableView, QHeaderView, QTextEdit
 from london_metro import create_summary, dijkstra_search, reconstruct_path
-import datetime
 
 
 class ExtendedComboBox(QComboBox):
@@ -51,7 +50,9 @@ class ExtendedComboBox(QComboBox):
 
 
 class TableModel(QAbstractTableModel):
-
+    """
+    Creates a Table Model for PyQt with a custom header
+    """
     def __init__(self, data):
         super(TableModel, self).__init__()
         self._data = data
@@ -93,7 +94,11 @@ class App(QMainWindow):
         self.setCentralWidget(main_frame)
 
     def calculate_necessary(self, start_station, end_station, leaving_time):
-
+        """
+        Runs Dijkstra's search algorithm with the user input,
+        and runs the necessary functions to obtain the path, line_changes, cost_so_far
+        $:returns True for succesful operation, False for error
+        """
         start = self.metro_graph.get_station(start_station)
         end = self.metro_graph.get_station(end_station)
         if start and end:
@@ -104,23 +109,27 @@ class App(QMainWindow):
             return True
         else:
             self.summary.setText("Wrong stations")
-            return None
+            return False
 
     def draw_table(self):
         """
         Draws a table with the selected data
-        :return:
         """
         self.model = TableModel(self.path_steps)
         self.table.setModel(self.model)
 
     def update_summary(self):
+        """
+        Updates summary text with the latest information
+        """
         summary_text = "\nchange\n".join((f"{line}: {fr} to {to}" for line, fr, to in self.line_changes))
         summary_text += f"\nTotal journey time: {self.total_time} minutes"
         self.summary.setText(summary_text)
 
-    def plan_button_state(self):
+    def on_plan_press(self):
         """
+        Parses the user input and if everything is okay
+        Calls the functions for drawing the table and updating the summary
         """
         start_station = str(self.from_station_edit.currentText())
         end_station = str(self.to_station_edit.currentText())
@@ -132,7 +141,6 @@ class App(QMainWindow):
             self.draw_table()
             self.update_summary()
 
-
     def create_main_frame(self):
         time_options = {
             "displayFormat": "hh:mm AP",
@@ -140,30 +148,36 @@ class App(QMainWindow):
             "maximumTime": QTime.fromString("24:00", "hh:mm")
         }
 
+        # Create the time input
         start_time_label = QLabel("Start time:")
         self.start_time_edit = QTimeEdit(**time_options)
         self.start_time_edit.setTime(self.start_time_edit.minimumTime())
         self.start_time_edit.setMinimumWidth(100)
 
+        # Create the text input for source station
         from_station_label = QLabel("From:")
         self.from_station_edit = ExtendedComboBox()
         self.from_station_edit.setModel(QStringListModel(self.available_stations))
 
+        # Create the text input for target station
         to_station_label = QLabel("To:")
         self.to_station_edit = ExtendedComboBox()
         self.to_station_edit.setModel(QStringListModel(self.available_stations))
 
+        # Button when pressed will update the table and summary
         self.plan_button = QPushButton("Plan")
         self.plan_button.setCheckable(True)
         self.plan_button.toggle()
-        self.plan_button.clicked.connect(self.plan_button_state)
+        self.plan_button.clicked.connect(self.on_plan_press)
 
+        # Create the table to show the steps
         self.table = QTableView()
         self.table.setMinimumHeight(200)
         self.model = TableModel(self.path_steps)
         self.table.setModel(self.model)
         self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
 
+        # Create the text box for summary information
         self.summary = QTextEdit()
         self.summary.setReadOnly(True)
 
