@@ -27,7 +27,7 @@ class MetroGraph:
         else:
             return None
 
-    def add_connection(self, line: str, source: str, destination: str, eta: int):
+    def add_connection(self, line: str, source: str, destination: str, eta: float):
         if source not in self.station_dict:
             self.add_station(source, line)
         if destination not in self.station_dict:

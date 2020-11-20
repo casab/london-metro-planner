@@ -1,9 +1,10 @@
 from london_metro import *
 from heapq import heappush, heappop
 from typing import Dict, Optional, List, Tuple
+from datetime import time, timedelta
 
 
-def dijkstra_search(start: Station, end: Station, waiting_time=1):
+def dijkstra_search(start: Station, end: Station, leaving_time: time, waiting_time=1):
     priority_queue = []
     heappush(priority_queue, (0, start))
     came_from: Dict[Station, Optional[Tuple[Station, str]]] = {start: None}
@@ -17,7 +18,7 @@ def dijkstra_search(start: Station, end: Station, waiting_time=1):
             break
 
         for (line, next_station), cost in current.get_neighbors().items():
-            new_cost = cost_so_far[current] + cost + waiting_time
+            new_cost = cost_so_far[current] + current.get_eta(line, next_station, add_minutes(leaving_time, cost_so_far[current])) + waiting_time
             if next_station not in cost_so_far or new_cost < cost_so_far[next_station]:
                 cost_so_far[next_station] = new_cost
                 priority = new_cost
