@@ -1,5 +1,5 @@
 from london_metro import Station
-from typing import Optional, List
+from typing import Optional, List, Tuple
 
 
 class MetroGraph:
@@ -26,6 +26,9 @@ class MetroGraph:
             return self.station_dict[name.lower()]
         else:
             return None
+
+    def get_station_names(self) -> List[str]:
+        return [station.get_name() for station in self.station_dict.values()]
 
     def add_connection(self, line: str, source: str, destination: str, eta: float):
         if source.lower() not in self.station_dict:

@@ -1,6 +1,7 @@
 from openpyxl import load_workbook
 from typing import Set, Tuple, List
-from datetime import time, datetime, timedelta
+from datetime import datetime, timedelta
+from itertools import groupby
 
 
 def read_data(path):
@@ -27,3 +28,37 @@ def add_minutes(time_obj, mins_to_add):
     fulldate = datetime(1, 1, 1, time_obj.hour, time_obj.minute, time_obj.second)
     fulldate = fulldate + timedelta(minutes=mins_to_add)
     return fulldate.time()
+
+
+def calculate_steps(path, cost_so_far, leaving_time):
+    steps = []
+    for i, (station, line) in enumerate(path):
+        previous_line = None
+        time_to_next = None
+        if i < len(path) - 1:
+            time_to_next = station.get_eta(line, path[i+1][0], add_minutes(leaving_time, cost_so_far[station]))
+        if i > 1:
+            previous_line = path[i - 1][1]
+        if previous_line and (previous_line != line):
+            steps.append([station.get_name(), previous_line, time_to_next, cost_so_far[station]])
+        else:
+            steps.append([station.get_name(), line, time_to_next, cost_so_far[station]])
+    return steps
+
+
+def calculate_changes(path):
+    changes = []
+    for line, stations in groupby(path, lambda t: t[1]):
+        stations = list(stations)
+        start_station = stations[0][0].get_name()
+        end_station = stations[-1][0].get_name()
+        changes.append([line, start_station, end_station])
+    for i in range(len(changes) - 1):
+        changes[i][-1] = changes[i+1][1]
+    return changes
+
+
+def create_summary(path, cost_so_far, leaving_time):
+    changes = calculate_changes(path)
+    steps = calculate_steps(path, cost_so_far, leaving_time)
+    return steps, changes
