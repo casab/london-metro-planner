@@ -1,11 +1,11 @@
-from london_metro import MetroGraph, read_data, App
+from london_metro import MetroGraph, read_data, App, resource_path
 import sys
 from PyQt5.QtWidgets import QApplication
 
 
 def main():
     # Read and parse the data from the excel file
-    connections, line_stations = read_data("../data/London_Underground_data.xlsx")
+    connections, line_stations = read_data(resource_path("London_Underground_data.xlsx"))
 
     # Create a Graph
     metro_graph = MetroGraph()

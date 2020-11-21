@@ -4,10 +4,10 @@ block_cipher = None
 
 
 a = Analysis(['london_metro\\main.py'],
-             pathex=['C:\\Users\\engin\\PycharmProjects\\82452796'],
+             pathex=['C:\\Users\\engin\\PycharmProjects\\82466668_london-metro'],
              binaries=[],
-             datas=[('data\\London_Underground_data.xlsx', '.\\data')],
-             hiddenimports=['PyQt5'],
+             datas=[('data/London_Underground_data.xlsx', 'data')],
+             hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
              excludes=[],

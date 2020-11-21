@@ -1,0 +1,1 @@
+pyinstaller --noconsole -F --add-data "data/London_Underground_data.xlsx;data" london_metro/main.py

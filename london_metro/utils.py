@@ -3,6 +3,20 @@ from typing import Dict, Tuple, List
 from datetime import datetime, timedelta, time
 from itertools import groupby
 from london_metro import Station
+import sys
+import os
+
+
+def resource_path(file):
+    """
+    Get absolute path to resource for PyInstaller
+    """
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    if hasattr(sys, '_MEIPASS'):
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        return os.path.join(base_path, f"data\\{file}")
+    else:
+        return os.path.join(base_path, f"..\\data\\{file}")
 
 
 def read_data(path):
